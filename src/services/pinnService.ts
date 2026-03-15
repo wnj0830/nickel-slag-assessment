@@ -161,8 +161,8 @@ class PINNPredictor {
     return s * (1 - s);
   }
 
-  private forwardPass(normalizedInput: number[]): number {
-    let current = normalizedInput;
+  private forwardPass(_normalizedInput: number[]): number {
+    let current = _normalizedInput;
     
     for (let i = 0; i < this.modelWeights.length; i++) {
       let sum = this.biases[i][0];
@@ -284,7 +284,7 @@ class PINNPredictor {
   ): Promise<PredictionResult> {
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    const normalizedInput = this.normalizeInput(input);
+    const _normalizedInput = this.normalizeInput(input);
     const basePrediction = this.calculateBasePrediction(input);
 
     const dataDrivenAdjustment = this.calculateDataDrivenAdjustment(input);
