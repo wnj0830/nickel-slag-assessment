@@ -1,0 +1,623 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --metal-light: #C0C4C8;
+  --metal: #8B9298;
+  --metal-dark: #5A6168;
+  --metal-glow: rgba(139, 146, 152, 0.4);
+  
+  --gold: #7A8288;
+  --gold-light: #9BA3A8;
+  --gold-dark: #5A6268;
+  --gold-glow: rgba(139, 146, 152, 0.4);
+  
+  --primary: #8B9298;
+  --primary-light: #A8AEB4;
+  --primary-dark: #5A6168;
+  --primary-glow: rgba(139, 146, 152, 0.4);
+  
+  --secondary: #4A90A4;
+  --secondary-light: #5AA0B4;
+  --secondary-glow: rgba(74, 144, 164, 0.4);
+  
+  --accent: #B87333;
+  --accent-warm: #D4854A;
+  --accent-glow: rgba(184, 115, 51, 0.4);
+  
+  --copper: #B87333;
+  --copper-light: #D4854A;
+  --copper-glow: rgba(184, 115, 51, 0.4);
+  
+  --nickel: #A8A9AD;
+  --nickel-light: #C0C1C5;
+  
+  --bg-void: #0A0C0E;
+  --bg-deep: #0E1012;
+  --bg-dark: #141618;
+  --bg-card: #1A1D21;
+  --bg-card-hover: #242830;
+  --bg-elevated: #1C2024;
+  --bg-glass: rgba(26, 29, 33, 0.7);
+  
+  --text-primary: #E4E8EC;
+  --text-secondary: #9BA3A8;
+  --text-muted: #6B7378;
+  --text-dim: #4A5258;
+  
+  --border-subtle: rgba(139, 146, 152, 0.1);
+  --border-light: rgba(139, 146, 152, 0.2);
+  --border-accent: rgba(139, 146, 152, 0.4);
+  
+  --gradient-primary: linear-gradient(135deg, #8B9298 0%, #5A6168 100%);
+  --gradient-card: linear-gradient(145deg, #1C2024 0%, #0E1012 100%);
+  --gradient-glow: radial-gradient(ellipse at 30% 20%, rgba(139, 146, 152, 0.15) 0%, transparent 50%);
+  --gradient-mesh: radial-gradient(at 40% 20%, rgba(139, 146, 152, 0.1) 0px, transparent 50%),
+                   radial-gradient(at 80% 0%, rgba(74, 144, 164, 0.08) 0px, transparent 50%),
+                   radial-gradient(at 0% 50%, rgba(184, 115, 51, 0.08) 0px, transparent 50%),
+                   radial-gradient(at 80% 50%, rgba(139, 146, 152, 0.06) 0px, transparent 50%),
+                   radial-gradient(at 0% 100%, rgba(74, 144, 164, 0.08) 0px, transparent 50%);
+  
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.6);
+  --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.7);
+  --shadow-lg: 0 8px 48px rgba(0, 0, 0, 0.8);
+  --shadow-glow: 0 0 40px rgba(139, 146, 152, 0.2);
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
+  
+  --transition-fast: 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-spring: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  
+  font-family: 'Noto Sans SC', 'IBM Plex Sans', system-ui, sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+  color-scheme: dark;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--bg-dark);
+  color: var(--text-primary);
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    var(--gradient-mesh),
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(139, 146, 152, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 100% 100%, rgba(74, 144, 164, 0.1) 0%, transparent 50%),
+    linear-gradient(180deg, transparent 0%, rgba(10, 12, 14, 0.5) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.025;
+  pointer-events: none;
+  z-index: 0;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-card-hover);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(139, 146, 152, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(139, 146, 152, 0.5); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.02); }
+}
+
+@keyframes gridMove {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(100px); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s var(--transition-smooth) forwards;
+}
+
+.animate-fade-in-scale {
+  animation: fadeInScale 0.4s var(--transition-smooth) forwards;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.4s ease forwards;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.1s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.2s; }
+.stagger-5 { animation-delay: 0.25s; }
+.stagger-6 { animation-delay: 0.3s; }
+
+.MuiDrawer-paper {
+  background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-deep) 100%) !important;
+  border-right: 1px solid var(--border-subtle) !important;
+  backdrop-filter: blur(20px);
+}
+
+.MuiAppBar-root {
+  background: linear-gradient(180deg, rgba(14, 16, 18, 0.94) 0%, rgba(14, 16, 18, 0.88) 100%) !important;
+  backdrop-filter: blur(24px) !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4) !important;
+}
+
+.MuiCard-root {
+  background: linear-gradient(145deg, rgba(26, 29, 33, 0.92) 0%, rgba(14, 16, 18, 0.85) 100%) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: var(--radius-lg) !important;
+  transition: all var(--transition-normal) !important;
+  backdrop-filter: blur(10px);
+}
+
+.MuiCard-root:hover {
+  border-color: var(--border-accent) !important;
+  transform: translateY(-4px) !important;
+  box-shadow: var(--shadow-lg), 0 0 30px rgba(139, 146, 152, 0.1) !important;
+}
+
+.MuiButton-root {
+  border-radius: var(--radius-md) !important;
+  text-transform: none !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.02em !important;
+  transition: all var(--transition-normal) !important;
+}
+
+.MuiButton-containedPrimary {
+  background: var(--gradient-primary) !important;
+  box-shadow: 0 4px 20px rgba(139, 146, 152, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(139, 146, 152, 0.2) !important;
+}
+
+.MuiButton-containedPrimary:hover {
+  box-shadow: 0 6px 30px rgba(139, 146, 152, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+  transform: translateY(-2px);
+}
+
+.MuiButton-outlined {
+  border-color: var(--border-light) !important;
+  color: var(--text-secondary) !important;
+}
+
+.MuiButton-outlined:hover {
+  border-color: var(--primary) !important;
+  color: var(--primary) !important;
+  background: rgba(139, 146, 152, 0.1) !important;
+}
+
+.MuiSlider-root {
+  color: var(--primary) !important;
+}
+
+.MuiSlider-thumb {
+  box-shadow: 0 0 12px rgba(139, 146, 152, 0.5) !important;
+  transition: box-shadow var(--transition-fast) !important;
+}
+
+.MuiSlider-thumb:hover {
+  box-shadow: 0 0 20px rgba(139, 146, 152, 0.7) !important;
+}
+
+.MuiTableHead-root .MuiTableCell-root {
+  background: linear-gradient(180deg, var(--bg-elevated) 0%, rgba(21, 29, 43, 0.8) 100%) !important;
+  color: var(--text-secondary) !important;
+  font-weight: 600 !important;
+  border-bottom: 1px solid var(--border-light) !important;
+}
+
+.MuiTableBody-root .MuiTableRow-root:hover {
+  background: rgba(139, 146, 152, 0.04) !important;
+}
+
+.MuiTableCell-root {
+  border-bottom-color: var(--border-subtle) !important;
+}
+
+.MuiChip-root {
+  border-radius: var(--radius-sm) !important;
+  font-weight: 500 !important;
+}
+
+.MuiChip-filled {
+  background: rgba(139, 146, 152, 0.12) !important;
+  color: var(--primary) !important;
+}
+
+.MuiTab-root {
+  text-transform: none !important;
+  font-weight: 500 !important;
+  transition: all var(--transition-normal) !important;
+}
+
+.MuiTab-root:hover {
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
+.MuiAlert-root {
+  border-radius: var(--radius-md) !important;
+  backdrop-filter: blur(10px);
+}
+
+.MuiAlert-standardSuccess {
+  background: rgba(139, 146, 152, 0.1) !important;
+  border: 1px solid rgba(139, 146, 152, 0.2) !important;
+}
+
+.MuiDialog-paper {
+  background: linear-gradient(145deg, var(--bg-card) 0%, var(--bg-deep) 100%) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: var(--radius-xl) !important;
+  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-lg), 0 0 60px rgba(0, 0, 0, 0.5) !important;
+}
+
+.MuiTextField-root .MuiOutlinedInput-root {
+  border-radius: var(--radius-md) !important;
+}
+
+.MuiOutlinedInput-root {
+  border-radius: var(--radius-md) !important;
+  background: rgba(10, 14, 23, 0.5) !important;
+  transition: all var(--transition-normal) !important;
+}
+
+.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: var(--primary) !important;
+  border-width: 1px !important;
+}
+
+.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: var(--primary) !important;
+  border-width: 1.5px !important;
+  box-shadow: 0 0 12px rgba(139, 146, 152, 0.15) !important;
+}
+
+.MuiOutlinedInput-input {
+  color: #FFFFFF !important;
+}
+
+.MuiInputLabel-root {
+  color: var(--text-secondary) !important;
+}
+
+.MuiInputLabel-root.Mui-focused {
+  color: var(--primary) !important;
+}
+
+.MuiSelect-root {
+  border-radius: var(--radius-md) !important;
+}
+
+.MuiMenu-paper {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: var(--radius-md) !important;
+  backdrop-filter: blur(20px);
+}
+
+.MuiMenuItem-root:hover {
+  background: rgba(139, 146, 152, 0.08) !important;
+}
+
+.MuiMenuItem-root.Mui-selected {
+  background: rgba(139, 146, 152, 0.12) !important;
+}
+
+.MuiTooltip-tooltip {
+  background: var(--bg-elevated) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: var(--radius-sm) !important;
+  backdrop-filter: blur(10px);
+  font-size: 0.75rem;
+}
+
+.glass-panel {
+  background: linear-gradient(145deg, rgba(21, 29, 43, 0.7) 0%, rgba(10, 14, 23, 0.5) 100%);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(16px);
+}
+
+.glass-card {
+  background: linear-gradient(145deg, rgba(21, 29, 43, 0.6) 0%, rgba(10, 14, 23, 0.4) 100%);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(12px);
+  transition: all var(--transition-normal);
+}
+
+.glass-card:hover {
+  border-color: var(--border-accent);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg), 0 0 30px rgba(139, 146, 152, 0.06);
+}
+
+.glow-border {
+  position: relative;
+}
+
+.glow-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: var(--gradient-primary);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+  z-index: -1;
+}
+
+.glow-border:hover::before {
+  opacity: 0.3;
+}
+
+.MuiTypography-root {
+  color: var(--text-primary);
+}
+
+.MuiTypography-colorTextSecondary {
+  color: var(--text-secondary) !important;
+}
+
+.MuiTypography-colorTextPrimary {
+  color: var(--text-primary) !important;
+}
+
+.MuiTableCell-root {
+  color: var(--text-primary) !important;
+}
+
+.MuiTableCell-body {
+  color: var(--text-secondary) !important;
+}
+
+.MuiTableCell-head {
+  color: var(--text-primary) !important;
+  font-weight: 600 !important;
+}
+
+.MuiTab-root {
+  color: var(--text-secondary) !important;
+}
+
+.MuiTab-root.Mui-selected {
+  color: var(--primary) !important;
+}
+
+.MuiChip-label {
+  color: inherit !important;
+}
+
+.MuiTableCell-root {
+  border-bottom-color: var(--border-subtle) !important;
+}
+
+.MuiDialogTitle-root {
+  color: var(--text-primary) !important;
+}
+
+.MuiDialogContentText-root {
+  color: var(--text-secondary) !important;
+}
+
+.MuiInputLabel-root {
+  color: var(--text-secondary) !important;
+}
+
+.MuiInputBase-input {
+  color: #FFFFFF !important;
+}
+
+.MuiListItemText-primary {
+  color: var(--text-primary) !important;
+}
+
+.MuiListItemText-secondary {
+  color: var(--text-secondary) !important;
+}
+
+.MuiAlert-message {
+  color: var(--text-primary) !important;
+}
+
+.MuiAlert-title {
+  color: var(--text-primary) !important;
+}
+
+.MuiStepLabel-label {
+  color: var(--text-secondary) !important;
+}
+
+.MuiStepLabel-label.Mui-active {
+  color: var(--primary) !important;
+}
+
+.MuiStepLabel-label.Mui-completed {
+  color: var(--primary) !important;
+}
+
+.MuiTabPanel-root {
+  color: var(--text-primary) !important;
+}
+
+.MuiBreadcrumbs-separator {
+  color: var(--text-muted) !important;
+}
+
+.MuiBreadcrumbs-link {
+  color: var(--text-secondary) !important;
+}
+
+.MuiBreadcrumbs-link:hover {
+  color: var(--primary) !important;
+}
+
+.MuiBreadcrumbs-li:last-child {
+  color: var(--text-primary) !important;
+}
+
+.MuiAlert-icon {
+  color: var(--primary) !important;
+}
+
+.MuiSvgIcon-root {
+  color: var(--text-primary);
+}
+
+.MuiPickersDay-day {
+  color: var(--text-primary) !important;
+}
+
+.MuiDateCalendar-weekDayLabel {
+  color: var(--text-secondary) !important;
+}
+
+.Mui yearPickers-yearYear {
+  color: var(--text-primary) !important;
+}
+
+.MuiInputBase-root {
+  color: #FFFFFF !important;
+}
+
+.MuiOutlinedInput-notchedOutline {
+  border-color: var(--border-light) !important;
+}
+
+.MuiInputLabel-asterisk {
+  color: var(--accent) !important;
+}
+
+.MuiLinearProgress-root {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.MuiTooltip-arrow {
+  color: var(--bg-elevated) !important;
+}
+
+.MuiSkeleton-root {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.MuiBackdrop-root {
+  background-color: rgba(3, 5, 8, 0.7) !important;
+}
+
+.MuiInputAdornment-root {
+  color: #FFFFFF !important;
+}
+
+.MuiInputBase-input {
+  color: #FFFFFF !important;
+}
