@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Box, Card, CardContent, Typography, Grid, Chip, Button } from '@mui/material';
-import { LocationOn, Speed, WaterDrop, Thermostat, Warning, Refresh, Layers, Straighten } from '@mui/icons-material';
+import { LocationOn, Speed, WaterDrop, Thermostat, Warning, Refresh, Layers, Straighten, Build } from '@mui/icons-material';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { refreshAllData } from '../store/slices/realtimeDataSlice';
 
@@ -38,26 +38,48 @@ function AnimatedNumber({ value, suffix = '', decimals = 1 }: AnimatedNumberProp
   return <>{displayValue.toFixed(decimals)}{suffix}</>;
 }
 
+const faultDiagnosis: Record<string, { cause: string; solution: string }> = {
+  'S001': { cause: '压实度不足，含水率偏高', solution: '重新压实处理' },
+  'S002': { cause: '路基含水率过高', solution: '加强排水晾晒' },
+  'S003': { cause: '颗粒级配不良', solution: '补充集料' },
+  'S004': { cause: '结构层厚度不足', solution: '增加结构层厚度' },
+  'S005': { cause: '现场含水率偏高', solution: '翻松晾晒后压实' },
+  'S006': { cause: '压实度未达标', solution: '调整含水率后压实' },
+  'S007': { cause: '压实困难区域', solution: '使用小型设备压实' },
+  'S008': { cause: '温度过低影响压实', solution: '调整施工时间' },
+  'S009': { cause: '平整度不足', solution: '补充压实' },
+  'S010': { cause: '排水不畅', solution: '完善排水设施' },
+  'S011': { cause: '荷载作用下压实度下降', solution: '增加压实遍数' },
+  'S012': { cause: '干湿循环导致强度下降', solution: '加强养护' },
+};
+
 export default function RoadScene3D() {
   const dispatch = useAppDispatch();
   const { sensors, hasWarning, criticalSectionId } = useAppSelector(state => state.realtimeData);
   const initialSensor = hasWarning && criticalSectionId ? criticalSectionId : null;
-  const [selectedSensor, setSelectedSensor] = useState<string | null>(initialSensor);
+  const [selectedSensor, setSelectedSensor] = useState<string | null>(null);
 
   useEffect(() => {
+    setSelectedSensor(criticalSectionId);
+  }, [criticalSectionId]);
+
+  useEffect(() => {
+    dispatch(refreshAllData());
+    
     const interval = setInterval(() => {
       dispatch(refreshAllData());
-    }, 2000);
+    }, 15000);
     return () => clearInterval(interval);
   }, [dispatch]);
 
-  useEffect(() => {
-    if (criticalSectionId) {
-      setSelectedSensor(criticalSectionId);
-    }
-  }, [criticalSectionId]);
-
   const displaySensors = sensors.slice(0, 4);
+
+  const facilitySensors = [
+    { type: 'drainage', name: '排水设施', sensor: sensors.find(s => s.type === 'drainage') },
+    { type: 'safety', name: '安全设施', sensor: sensors.find(s => s.type === 'safety') },
+    { type: 'auxiliary', name: '附属设施', sensor: sensors.find(s => s.type === 'auxiliary') },
+    { type: 'structure', name: '结构物', sensor: sensors.find(s => s.type === 'structure') },
+  ];
 
   const yangjiangLocation = {
     name: '广东省阳江市高新区镍铁渣道路试验段',
@@ -118,7 +140,7 @@ export default function RoadScene3D() {
         </Button>
       </Box>
 
-      {hasWarning && (
+      {criticalSectionId && (
         <Box sx={{ 
           mb: 3, 
           p: 2.5, 
@@ -207,23 +229,22 @@ export default function RoadScene3D() {
                     <rect x="0" y="180" width="800" height="120" fill="#4a4a4a" rx="2" />
                     <text x="10" y="175" fill="#94a3b8" fontSize="10">路基 (压实土)</text>
 
-                    {[0, 1, 2, 3].map((i) => {
-                      const sensor = displaySensors[i];
-                      if (!sensor) return null;
+                    {facilitySensors.map((item, i) => {
+                      const sensor = item.sensor;
                       const x = 150 + i * 180;
-                      const isSelected = selectedSensor === sensor.id;
-                      const isCritical = sensor.status === 'critical';
+                      const isSelected = selectedSensor === item.type;
+                      const status = sensor?.status || 'normal';
                       
                       return (
-                        <g key={sensor.id}>
+                        <g key={item.type}>
                           <circle 
                             cx={x} 
                             cy={85} 
                             r={isSelected ? 18 : 14}
-                            fill={isCritical ? '#ef4444' : isSelected ? 'var(--gold)' : '#10b981'}
+                            fill={status === 'critical' ? '#ef4444' : status === 'warning' ? '#f59e0b' : isSelected ? 'var(--gold)' : '#10b981'}
                             opacity={0.9}
                             style={{ cursor: 'pointer', transition: 'all 0.3s' }}
-                            onClick={() => setSelectedSensor(sensor.id)}
+                            onClick={() => setSelectedSensor(item.type)}
                           >
                             <animate 
                               attributeName="r" 
@@ -240,7 +261,7 @@ export default function RoadScene3D() {
                             textAnchor="middle"
                             fontWeight="bold"
                           >
-                            {sensor.locationName.slice(0, 4)}
+                            {item.name}
                           </text>
                           <text 
                             x={x} 
@@ -249,7 +270,7 @@ export default function RoadScene3D() {
                             fontSize="9" 
                             textAnchor="middle"
                           >
-                            压实度: <tspan fill={getStatusColor(sensor.status)}>{sensor.actualCompactionDegree.toFixed(1)}%</tspan>
+                            {sensor ? `压实度: ${sensor.actualCompactionDegree.toFixed(1)}%` : '无数据'}
                           </text>
                         </g>
                       );
@@ -294,104 +315,128 @@ export default function RoadScene3D() {
               </Typography>
               
               <Grid container spacing={1.5}>
-                {displaySensors.map((sensor) => (
-                  <Grid size={{ xs: 12 }} key={sensor.id}>
-                    <Box
-                      onClick={() => setSelectedSensor(sensor.id)}
-                      sx={{
-                        p: 2,
-                        borderRadius: '12px',
-                        bgcolor: selectedSensor === sensor.id 
-                          ? 'rgba(212, 175, 55, 0.15)'
-                          : sensor.status === 'critical' 
-                          ? 'rgba(239, 68, 68, 0.1)' 
-                          : sensor.status === 'warning'
-                          ? 'rgba(245, 158, 11, 0.1)'
-                          : 'rgba(255, 255, 255, 0.02)',
-                        border: `1px solid ${selectedSensor === sensor.id 
-                          ? 'var(--gold)'
-                          : sensor.status === 'critical' 
-                          ? 'rgba(239, 68, 68, 0.3)' 
-                          : sensor.status === 'warning'
-                          ? 'rgba(245, 158, 11, 0.3)'
-                          : 'var(--border-subtle)'}`,
-                        cursor: 'pointer',
-                        transition: 'all 0.3s ease',
-                        animation: sensor.status === 'critical' ? 'glow 1.5s ease-in-out infinite' : 'none',
-                        '&:hover': {
-                          transform: 'translateX(4px)',
-                          borderColor: 'var(--gold)',
-                        }
-                      }}
-                    >
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
-                        <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.85rem' }}>
-                          {sensor.locationName}
-                        </Typography>
-                        <Chip 
-                          label={sensor.status === 'normal' ? '正常' : sensor.status === 'warning' ? '警告' : '危险'}
-                          size="small"
-                          sx={{
-                            bgcolor: sensor.status === 'critical' 
-                              ? 'rgba(239, 68, 68, 0.2)' 
-                              : sensor.status === 'warning'
-                              ? 'rgba(245, 158, 11, 0.2)'
-                              : 'rgba(16, 185, 129, 0.2)',
-                            color: sensor.status === 'critical' ? '#ef4444' : sensor.status === 'warning' ? '#f59e0b' : '#10b981',
-                            fontSize: '0.65rem',
-                          }}
-                        />
+                {sensors.map((sensor) => {
+                  const isSelected = selectedSensor === sensor.id;
+                  const isCritical = sensor.status === 'critical';
+                  const diagnosis = faultDiagnosis[sensor.id];
+
+                  return (
+                    <Grid size={{ xs: 12 }} key={sensor.id}>
+                      <Box
+                        onClick={() => setSelectedSensor(sensor.id)}
+                        sx={{
+                          p: 2,
+                          borderRadius: '12px',
+                          bgcolor: isSelected 
+                            ? 'rgba(212, 175, 55, 0.15)'
+                            : isCritical 
+                            ? 'rgba(239, 68, 68, 0.1)' 
+                            : sensor.status === 'warning'
+                            ? 'rgba(245, 158, 11, 0.1)'
+                            : 'rgba(255, 255, 255, 0.02)',
+                          border: `1px solid ${isSelected 
+                            ? 'var(--gold)'
+                            : isCritical 
+                            ? 'rgba(239, 68, 68, 0.3)' 
+                            : sensor.status === 'warning'
+                            ? 'rgba(245, 158, 11, 0.3)'
+                            : 'var(--border-subtle)'}`,
+                          cursor: 'pointer',
+                          transition: 'all 0.3s ease',
+                          animation: isCritical ? 'glow 1.5s ease-in-out infinite' : 'none',
+                          '&:hover': {
+                            transform: 'translateX(4px)',
+                            borderColor: 'var(--gold)',
+                          }
+                        }}
+                      >
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1.5 }}>
+                          <Typography variant="body2" sx={{ fontWeight: 600, fontSize: '0.85rem' }}>
+                            {sensor.locationName}
+                          </Typography>
+                          <Chip 
+                            label={sensor.status === 'normal' ? '正常' : sensor.status === 'warning' ? '警告' : '危险'}
+                            size="small"
+                            sx={{
+                              bgcolor: sensor.status === 'critical' 
+                                ? 'rgba(239, 68, 68, 0.2)' 
+                                : sensor.status === 'warning'
+                                ? 'rgba(245, 158, 11, 0.2)'
+                                : 'rgba(16, 185, 129, 0.2)',
+                              color: sensor.status === 'critical' ? '#ef4444' : sensor.status === 'warning' ? '#f59e0b' : '#10b981',
+                              fontSize: '0.65rem',
+                            }}
+                          />
+                        </Box>
+                        
+                        <Grid container spacing={1}>
+                          <Grid size={{ xs: 6 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                              <Speed sx={{ fontSize: 12, color: 'var(--gold)' }} />
+                              <Typography variant="caption" sx={{ color: 'var(--text-muted)', fontSize: '0.6rem' }}>
+                                压实度
+                              </Typography>
+                            </Box>
+                            <Typography variant="body2" sx={{ fontWeight: 700, color: isCritical ? '#ef4444' : 'var(--gold)', fontSize: '1rem' }}>
+                              <AnimatedNumber value={sensor.actualCompactionDegree} suffix="%" />
+                            </Typography>
+                          </Grid>
+                          <Grid size={{ xs: 6 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                              <WaterDrop sx={{ fontSize: 12, color: '#0EA5E9' }} />
+                              <Typography variant="caption" sx={{ color: 'var(--text-muted)', fontSize: '0.6rem' }}>
+                                含水率
+                              </Typography>
+                            </Box>
+                            <Typography variant="body2" sx={{ fontWeight: 700, fontSize: '1rem' }}>
+                              <AnimatedNumber value={sensor.fieldMoistureContent} suffix="%" />
+                            </Typography>
+                          </Grid>
+                          <Grid size={{ xs: 6 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                              <Thermostat sx={{ fontSize: 12, color: '#F59E0B' }} />
+                              <Typography variant="caption" sx={{ color: 'var(--text-muted)', fontSize: '0.6rem' }}>
+                                温度
+                              </Typography>
+                            </Box>
+                            <Typography variant="body2" sx={{ fontWeight: 700, fontSize: '1rem' }}>
+                              <AnimatedNumber value={sensor.subgradeTemperature} suffix="°C" />
+                            </Typography>
+                          </Grid>
+                          <Grid size={{ xs: 6 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                              <Straighten sx={{ fontSize: 12, color: '#8B5CF6' }} />
+                              <Typography variant="caption" sx={{ color: 'var(--text-muted)', fontSize: '0.6rem' }}>
+                                干密度
+                              </Typography>
+                            </Box>
+                            <Typography variant="body2" sx={{ fontWeight: 700, fontSize: '1rem' }}>
+                              <AnimatedNumber value={sensor.actualDryDensity} suffix="" decimals={2} />
+                            </Typography>
+                          </Grid>
+                        </Grid>
+
+                        {isCritical && diagnosis && isSelected && (
+                          <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid var(--border-subtle)' }}>
+                            <Box sx={{ mb: 1, p: 1, borderRadius: 6, bgcolor: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.3)' }}>
+                              <Typography variant="caption" sx={{ color: '#F59E0B', fontWeight: 600, fontSize: '0.65rem' }}>
+                                原因: {diagnosis.cause}
+                              </Typography>
+                            </Box>
+                            <Box sx={{ p: 1, borderRadius: 6, bgcolor: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                <Build sx={{ fontSize: 12, color: '#10B981' }} />
+                                <Typography variant="caption" sx={{ color: '#10B981', fontWeight: 600, fontSize: '0.65rem' }}>
+                                  解决: {diagnosis.solution}
+                                </Typography>
+                              </Box>
+                            </Box>
+                          </Box>
+                        )}
                       </Box>
-                      
-                      <Grid container spacing={1}>
-                        <Grid size={{ xs: 6 }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                            <Speed sx={{ fontSize: 12, color: 'var(--gold)' }} />
-                            <Typography variant="caption" sx={{ color: 'var(--text-muted)', fontSize: '0.6rem' }}>
-                              压实度
-                            </Typography>
-                          </Box>
-                          <Typography variant="body2" sx={{ fontWeight: 700, color: 'var(--gold)', fontSize: '1rem' }}>
-                            <AnimatedNumber value={sensor.actualCompactionDegree} suffix="%" />
-                          </Typography>
-                        </Grid>
-                        <Grid size={{ xs: 6 }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                            <WaterDrop sx={{ fontSize: 12, color: '#0EA5E9' }} />
-                            <Typography variant="caption" sx={{ color: 'var(--text-muted)', fontSize: '0.6rem' }}>
-                              含水率
-                            </Typography>
-                          </Box>
-                          <Typography variant="body2" sx={{ fontWeight: 700, fontSize: '1rem' }}>
-                            <AnimatedNumber value={sensor.fieldMoistureContent} suffix="%" />
-                          </Typography>
-                        </Grid>
-                        <Grid size={{ xs: 6 }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                            <Thermostat sx={{ fontSize: 12, color: '#F59E0B' }} />
-                            <Typography variant="caption" sx={{ color: 'var(--text-muted)', fontSize: '0.6rem' }}>
-                              温度
-                            </Typography>
-                          </Box>
-                          <Typography variant="body2" sx={{ fontWeight: 700, fontSize: '1rem' }}>
-                            <AnimatedNumber value={sensor.subgradeTemperature} suffix="°C" />
-                          </Typography>
-                        </Grid>
-                        <Grid size={{ xs: 6 }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                            <Straighten sx={{ fontSize: 12, color: '#8B5CF6' }} />
-                            <Typography variant="caption" sx={{ color: 'var(--text-muted)', fontSize: '0.6rem' }}>
-                              干密度
-                            </Typography>
-                          </Box>
-                          <Typography variant="body2" sx={{ fontWeight: 700, fontSize: '1rem' }}>
-                            <AnimatedNumber value={sensor.actualDryDensity} suffix="" decimals={2} />
-                          </Typography>
-                        </Grid>
-                      </Grid>
-                    </Box>
-                  </Grid>
-                ))}
+                    </Grid>
+                  );
+                })}
               </Grid>
             </CardContent>
           </Card>

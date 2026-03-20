@@ -60,13 +60,32 @@ export interface ProcessedDataRow {
 }
 
 export interface PredictionInput {
-  particleSize: number;
-  stressLevel: number;
-  loadingRate: number;
-  moistureContent: number;
-  compactionDegree: number;
-  slagContent: number;
-  cyclicTimes: number;
+  particleSize?: number;
+  stressLevel?: number;
+  loadingRate?: number;
+  moistureContent?: number;
+  compactionDegree?: number;
+  slagContent?: number;
+  cyclicTimes?: number;
+  particleDensity?: number;
+  maxDryDensity?: number;
+  optMoistureContent?: number;
+  nonUniformityCoeff?: number;
+  curvatureCoeff?: number;
+  poissonRatio?: number;
+  layerThickness?: number;
+  initialCompactionStd?: number;
+  actualDryDensity?: number;
+  actualCompactionDegree?: number;
+  fieldMoistureContent?: number;
+  saturation?: number;
+  confiningPressure?: number;
+  deviatorStress?: number;
+  octahedralNormalStress?: number;
+  octahedralShearStress?: number;
+  subgradeTemperature?: number;
+  dryWetCycleCount?: number;
+  trafficLoadCount?: number;
 }
 
 export interface PredictionResult {
@@ -145,6 +164,7 @@ export interface RealtimeSensorData {
   timestamp: string;
   locationId: string;
   locationName: string;
+  type?: 'drainage' | 'safety' | 'auxiliary' | 'structure' | 'other';
   gpsCoordinates: {
     lat: number;
     lng: number;

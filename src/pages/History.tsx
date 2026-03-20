@@ -83,20 +83,30 @@ export default function HistoryPage() {
         <Card sx={{
           background: 'linear-gradient(145deg, rgba(21, 29, 43, 0.95) 0%, rgba(10, 14, 23, 0.9) 100%)',
           border: '1px solid var(--border-subtle)',
+          position: 'relative',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 20,
+            right: 20,
+            height: 1,
+            background: 'linear-gradient(90deg, transparent 0%, rgba(139, 146, 152, 0.3) 50%, transparent 100%)',
+          },
         }}>
           <CardContent sx={{ py: 8, textAlign: 'center' }}>
             <Box sx={{ 
               width: 80, 
               height: 80, 
               borderRadius: '50%', 
-              background: 'rgba(139, 146, 152, 0.1)',
+              background: 'rgba(74, 144, 164, 0.1)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               mx: 'auto',
               mb: 3,
             }}>
-              <History sx={{ fontSize: 40, color: 'var(--primary)' }} />
+              <History sx={{ fontSize: 40, color: 'var(--secondary)' }} />
             </Box>
             <Typography variant="h6" sx={{ color: '#FFFFFF', mb: 1 }}>
               暂无评估记录
@@ -110,6 +120,16 @@ export default function HistoryPage() {
         <Card sx={{
           background: 'linear-gradient(145deg, rgba(21, 29, 43, 0.95) 0%, rgba(10, 14, 23, 0.9) 100%)',
           border: '1px solid var(--border-subtle)',
+          position: 'relative',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 20,
+            right: 20,
+            height: 1,
+            background: 'linear-gradient(90deg, transparent 0%, rgba(74, 144, 164, 0.3) 50%, transparent 100%)',
+          },
         }}>
           <CardContent sx={{ p: 0 }}>
             <Box sx={{ p: 3, pb: 0 }}>
@@ -118,7 +138,7 @@ export default function HistoryPage() {
                   width: 36, 
                   height: 36, 
                   borderRadius: '10px',
-                  background: 'linear-gradient(135deg, #8B9298 0%, #5A6168 100%)',
+                  background: 'linear-gradient(135deg, #4A90A4 0%, #2D5A6B 100%)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',

@@ -181,7 +181,7 @@ export default function Experiments() {
         </Typography>
       </Box>
 
-      <Card>
+      <Card sx={{ position: 'relative', '&::before': { content: '""', position: 'absolute', top: 0, left: 20, right: 20, height: 1, background: 'linear-gradient(90deg, transparent 0%, rgba(139, 146, 152, 0.3) 50%, transparent 100%)' } }}>
         <CardContent sx={{ p: 0 }}>
           <Tabs 
             value={tabValue} 

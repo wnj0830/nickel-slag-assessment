@@ -8,7 +8,7 @@ import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { refreshAllData } from '../store/slices/realtimeDataSlice';
 import { diagnosisRules, type AIConversation, type DiagnosisResult } from '../types';
 
-const RESILIENT_MODULUS_THRESHOLD = 30;
+const RESILIENT_MODULUS_THRESHOLD = 50;
 
 export default function AIChat() {
   const dispatch = useAppDispatch();
@@ -32,7 +32,7 @@ export default function AIChat() {
       setConversations([{
         id: '1',
         role: 'assistant',
-        content: '您好！我是镍铁渣道路健康监测AI助手。我会实时监控路基回弹模量，当数值低于30MPa时会自动发出警报，并分析原因提供解决方案。',
+        content: '您好！我是破碎镍铁渣路基健康监测AI助手。我会实时监控路基回弹模量，当数值低于50MPa时会自动发出警报，并分析原因提供解决方案。',
         timestamp: new Date().toISOString()
       }]);
     }

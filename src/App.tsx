@@ -38,7 +38,7 @@ function AppRoutes() {
           <Layout />
         </ProtectedRoute>
       }>
-        <Route index element={<AIChat />} />
+        <Route index element={<Navigate to="/predict" replace />} />
         <Route path="monitor-wall" element={<MonitorWall />} />
         <Route path="road-3d" element={<RoadScene3D />} />
         <Route path="sensors" element={<SensorMonitor />} />

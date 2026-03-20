@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Box, Card, CardContent, Typography, Grid, Chip, Button, Collapse } from '@mui/material';
+import { Box, Card, CardContent, Typography, Grid, Chip, Button, Collapse, IconButton } from '@mui/material';
 import { 
   Warning, CheckCircle, Error as ErrorIcon, 
   LocationOn, Speed, WaterDrop, Thermostat, Compress, Traffic,
-  Construction, Security, OtherHouses, Fullscreen, FullscreenExit
+  Construction, Security, OtherHouses, Fullscreen, FullscreenExit, Build, CheckCircleOutlined
 } from '@mui/icons-material';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
-import { refreshAllData, setExpanded } from '../store/slices/realtimeDataSlice';
+import { refreshAllData, setExpanded, clearWarning } from '../store/slices/realtimeDataSlice';
+import DangerLocationMap from './DangerLocationMap';
 
 interface DisplayConfig {
   id: string;
@@ -27,34 +28,61 @@ const displayConfigs: DisplayConfig[] = [
   { id: 'other4', title: '其他重要路况④', icon: <LocationOn />, sectionType: 'other', description: 'K2+400 - K2+500 重要路段' },
 ];
 
+const faultDiagnosis: Record<string, { cause: string; solution: string }> = {
+  'S001': { cause: '压实度不足(85%)，含水率偏高(17%)', solution: '建议重新压实处理，适当降低含水率' },
+  'S002': { cause: '路基含水率过高(18%)，压实度不达标', solution: '加强排水晾晒，补充压实作业' },
+  'S003': { cause: '颗粒级配不良，局部压实度偏低', solution: '补充集料，均匀压实' },
+  'S004': { cause: '结构层厚度不足，压实度偏低', solution: '增加结构层厚度，重新压实' },
+  'S005': { cause: '现场含水率偏高(16%)，饱和度较大', solution: '翻松晾晒，控制含水率后压实' },
+  'S006': { cause: '压实度未达标(88%)，材料含水量过大', solution: '洒水或晾晒调整含水率后压实' },
+  'S007': { cause: '结构物附近压实困难，压实度不足', solution: '采用小型压实设备加强压实' },
+  'S008': { cause: '温度过低影响压实效果(15°C)', solution: '调整施工时间，选择适宜气温施工' },
+  'S009': { cause: '路面平整度不足，压实度略低', solution: '精平后补充压实' },
+  'S010': { cause: '排水不畅导致含水率偏高', solution: '完善排水设施，加强排水' },
+  'S011': { cause: '交通荷载作用下压实度下降', solution: '适当增加压实遍数' },
+  'S012': { cause: '干湿循环导致强度下降', solution: '加强养护，必要时进行加固处理' },
+};
+
 export default function MonitorWall() {
   const dispatch = useAppDispatch();
-  const { sensors, hasWarning, isExpanded } = useAppSelector(state => state.realtimeData);
+  const { sensors, hasWarning, isExpanded, criticalSectionId } = useAppSelector(state => state.realtimeData);
   const [fullscreen, setFullscreen] = useState(false);
   const [jumped, setJumped] = useState(false);
+  const [resolvedId, setResolvedId] = useState<string | null>(null);
 
   const criticalSensor = sensors.find(s => s.status === 'critical');
 
   useEffect(() => {
+    dispatch(refreshAllData());
+    setTimeout(() => {
+      setJumped(true);
+    }, 5000);
+    
     const interval = setInterval(() => {
       dispatch(refreshAllData());
       setJumped(false);
-    }, 60000);
+      setTimeout(() => {
+        setJumped(true);
+      }, 800);
+    }, 15000);
     return () => clearInterval(interval);
   }, [dispatch]);
 
   useEffect(() => {
     if (hasWarning && criticalSensor && !jumped) {
       const timer = setTimeout(() => {
-        const warningCard = document.getElementById(`sensor-card-${criticalSensor.id}`);
-        if (warningCard) {
-          warningCard.scrollIntoView({ behavior: 'auto', block: 'center' });
-          setJumped(true);
-        }
-      }, 500);
+        setJumped(true);
+      }, 800);
       return () => clearTimeout(timer);
+    } else if (!hasWarning) {
+      setJumped(false);
     }
   }, [hasWarning, criticalSensor, jumped]);
+
+  const handleResolve = (sensorId: string) => {
+    setResolvedId(sensorId);
+    dispatch(clearWarning());
+  };
 
   const importantDisplays = displayConfigs.slice(0, 4);
   const allDisplays = isExpanded ? displayConfigs : importantDisplays;
@@ -151,68 +179,148 @@ export default function MonitorWall() {
         </Box>
       </Box>
 
-      {hasWarning && criticalSensor && (
+      {hasWarning && criticalSensor && jumped && (
         <Box sx={{ 
           mb: 3, 
-          p: 3, 
-          borderRadius: '16px',
-          background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(220, 38, 38, 0.15) 100%)',
-          border: '3px solid rgba(239, 68, 68, 0.7)',
+          p: 4, 
+          borderRadius: '20px',
+          background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.4) 0%, rgba(220, 38, 38, 0.3) 100%)',
+          border: '4px solid rgba(239, 68, 68, 0.9)',
           display: 'flex',
           alignItems: 'center',
-          gap: 3,
-          animation: 'glow 1.5s ease-in-out infinite',
-          boxShadow: '0 0 40px rgba(239, 68, 68, 0.3)',
+          gap: 4,
+          animation: 'glow 0.8s ease-in-out infinite',
+          boxShadow: '0 0 60px rgba(239, 68, 68, 0.6), inset 0 0 30px rgba(239, 68, 68, 0.1)',
+          position: 'relative',
+          overflow: 'hidden',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '4px',
+            background: 'linear-gradient(90deg, #ef4444, #f59e0b, #ef4444)',
+            animation: 'gradientMove 1s linear infinite',
+          }
         }}>
           <Box sx={{
-            width: 64,
-            height: 64,
+            width: 80,
+            height: 80,
             borderRadius: '50%',
             bgcolor: '#ef4444',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 0 30px rgba(239, 68, 68, 0.6)',
-            animation: 'pulse 1s ease-in-out infinite',
+            boxShadow: '0 0 40px rgba(239, 68, 68, 0.8)',
+            animation: 'pulse 0.5s ease-in-out infinite',
+            flexShrink: 0,
           }}>
-            <Warning sx={{ fontSize: 36, color: '#fff' }} />
+            <Warning sx={{ fontSize: 48, color: '#fff' }} />
           </Box>
           <Box sx={{ flex: 1 }}>
-            <Typography variant="h6" sx={{ color: '#ef4444', fontWeight: 700, mb: 1 }}>
+            <Typography variant="h5" sx={{ color: '#ef4444', fontWeight: 800, mb: 2, fontSize: '1.5rem' }}>
               ⚠️ 危险路段警报 - 已定位到具体位置
             </Typography>
             <Box sx={{ 
-              p: 2, 
-              borderRadius: '12px', 
-              bgcolor: 'rgba(0, 0, 0, 0.3)',
-              border: '1px solid rgba(239, 68, 68, 0.3)',
+              p: 3, 
+              borderRadius: '16px', 
+              bgcolor: 'rgba(0, 0, 0, 0.4)',
+              border: '2px solid rgba(239, 68, 68, 0.4)',
             }}>
-              <Typography variant="body2" sx={{ color: '#fff', fontWeight: 600, mb: 0.5, fontSize: '1rem' }}>
+              <Typography variant="h6" sx={{ color: '#fff', fontWeight: 700, mb: 1.5, fontSize: '1.2rem' }}>
                 📍 危险位置: {criticalSensor.locationName}
               </Typography>
-              <Typography variant="body2" sx={{ color: 'var(--gold)', mb: 0.5 }}>
+              <Typography variant="body1" sx={{ color: 'var(--gold)', mb: 1.5, fontSize: '1rem' }}>
                 🗺️ 项目位置: 广东省阳江市高新区镍铁渣道路试验段
               </Typography>
-              <Typography variant="body2" sx={{ color: '#0EA5E9' }}>
-                📌 GPS坐标: 纬度 {criticalSensor.gpsCoordinates.lat.toFixed(5)}°, 经度 {criticalSensor.gpsCoordinates.lng.toFixed(5)}°
-              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mt: 2 }}>
+                <Box sx={{ 
+                  px: 2.5, 
+                  py: 1, 
+                  borderRadius: '10px',
+                  bgcolor: '#0EA5E9',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  boxShadow: '0 0 15px rgba(14, 165, 233, 0.5)',
+                }}>
+                  <LocationOn sx={{ fontSize: 22, color: '#fff' }} />
+                  <Typography variant="h6" sx={{ color: '#fff', fontWeight: 700, fontSize: '1.1rem' }}>
+                    GPS: {criticalSensor.gpsCoordinates.lat.toFixed(5)}°, {criticalSensor.gpsCoordinates.lng.toFixed(5)}°
+                  </Typography>
+                </Box>
+              </Box>
             </Box>
           </Box>
-          <Chip 
-            label={jumped ? "✓ 已定位" : "定位中..."}
-            sx={{ 
-              bgcolor: jumped ? '#10b981' : '#ef4444',
-              color: '#fff',
-              fontWeight: 700,
-              fontSize: '0.9rem',
-              py: 2,
-              px: 3,
-              animation: jumped ? 'none' : 'pulse 1s ease-in-out infinite',
-            }}
-          />
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 140 }}>
+            <Chip 
+              label="✓ 已定位"
+              sx={{ 
+                bgcolor: '#10b981',
+                color: '#fff',
+                fontWeight: 800,
+                fontSize: '1.1rem',
+                py: 2,
+                px: 3,
+                boxShadow: '0 0 15px rgba(16, 185, 129, 0.5)',
+              }}
+            />
+            <Button
+              variant="contained"
+              size="large"
+              startIcon={<CheckCircleOutlined />}
+              onClick={() => handleResolve(criticalSensor.id)}
+              sx={{
+                bgcolor: '#10B981',
+                color: '#fff',
+                fontWeight: 800,
+                fontSize: '1.1rem',
+                py: 1.5,
+                px: 2,
+                boxShadow: '0 0 20px rgba(16, 185, 129, 0.6)',
+                border: '2px solid #10B981',
+                '&:hover': { bgcolor: '#059669', boxShadow: '0 0 30px rgba(16, 185, 129, 0.8)' },
+              }}
+            >
+              解决
+            </Button>
+          </Box>
         </Box>
       )}
 
+      {resolvedId && (
+        <Box sx={{ 
+          mb: 3, 
+          p: 2, 
+          borderRadius: '12px',
+          background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.15) 100%)',
+          border: '2px solid rgba(16, 185, 129, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 2,
+        }}>
+          <CheckCircle sx={{ color: '#10B981' }} />
+          <Typography variant="body2" sx={{ color: '#10B981', fontWeight: 600 }}>
+            已成功解决 {sensors.find(s => s.id === resolvedId)?.locationName || resolvedId} 的问题
+          </Typography>
+          <Button 
+            size="small" 
+            onClick={() => setResolvedId(null)}
+            sx={{ ml: 'auto', color: 'var(--text-secondary)' }}
+          >
+            关闭
+          </Button>
+        </Box>
+      )}
+        {criticalSensor && ( // 只要有危险传感器就显示
+        <Box sx={{ mb: 3, mt: 2 }}>
+          <Typography variant="h5" sx={{ color: '#e4e8ec', mb: 1 }}>
+            🗺️ 危险位置地图
+          </Typography>
+          <DangerLocationMap height="400px" />
+        </Box>
+      )}
       <Box sx={{ 
         flex: 1, 
         display: 'grid', 
@@ -223,10 +331,11 @@ export default function MonitorWall() {
         overflow: 'auto',
       }}>
         {allDisplays.map((display, idx) => {
-          const sensorData = sensors[idx] || sensors.find(s => s.id === `S${idx + 1}`);
+          const sensorData = sensors[idx] || sensors.find(s => s.id === `S${String(idx + 1).padStart(3, '0')}`);
           const isCritical = sensorData?.status === 'critical';
           const isWarning = sensorData?.status === 'warning';
           const isSelected = criticalSensor?.id === sensorData?.id;
+          const diagnosis = sensorData ? faultDiagnosis[sensorData.id] : null;
 
           return (
             <Card 
@@ -381,7 +490,34 @@ export default function MonitorWall() {
                   </Grid>
                 </Grid>
 
-                {sensorData && (
+                {isCritical && diagnosis && (
+                  <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid var(--border-subtle)' }}>
+                    <Box sx={{ mb: 1.5, p: 1.5, borderRadius: 8, bgcolor: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.3)' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5 }}>
+                        <Warning sx={{ fontSize: 14, color: '#F59E0B' }} />
+                        <Typography variant="caption" sx={{ color: '#F59E0B', fontWeight: 600, fontSize: '0.7rem' }}>
+                          问题原因
+                        </Typography>
+                      </Box>
+                      <Typography variant="caption" sx={{ color: '#FFFFFF', fontSize: '0.7rem' }}>
+                        {diagnosis.cause}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ p: 1.5, borderRadius: 8, bgcolor: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 0.5 }}>
+                        <Build sx={{ fontSize: 14, color: '#10B981' }} />
+                        <Typography variant="caption" sx={{ color: '#10B981', fontWeight: 600, fontSize: '0.7rem' }}>
+                          解决方法
+                        </Typography>
+                      </Box>
+                      <Typography variant="caption" sx={{ color: '#FFFFFF', fontSize: '0.7rem' }}>
+                        {diagnosis.solution}
+                      </Typography>
+                    </Box>
+                  </Box>
+                )}
+
+                {sensorData && !isCritical && (
                   <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid var(--border-subtle)' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                       <LocationOn sx={{ fontSize: 14, color: 'var(--text-muted)' }} />

@@ -112,7 +112,7 @@ export default function Dashboard() {
   };
 
   const statCards = [
-    { title: '试验数据总量', value: experiments.length || 128, unit: '条记录', icon: <Science />, gradient: 'linear-gradient(135deg, #8B9298 0%, #5A6168 100%)', color: '#8B9298', glow: 'rgba(139, 146, 152, 0.25)' },
+    { title: '试验数据总量', value: experiments.length || 128, unit: '条记录', icon: <Science />, gradient: 'linear-gradient(135deg, #4A90A4 0%, #2D5A6B 100%)', color: '#4A90A4', glow: 'rgba(74, 144, 164, 0.25)' },
     { title: '预测准确率', value: currentModel?.accuracy ? (currentModel.accuracy * 100).toFixed(0) : 94, unit: '%', icon: <Assessment />, gradient: 'linear-gradient(135deg, #10B981 0%, #059669 100%)', color: '#10B981', glow: 'rgba(16, 185, 129, 0.25)' },
     { title: '预测评估次数', value: predictions.length || 256, unit: '次', icon: <TrendingUp />, gradient: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)', color: '#F59E0B', glow: 'rgba(245, 158, 11, 0.25)' },
     { title: '模型版本', value: currentModel?.version || '1.0', unit: '', icon: <Psychology />, gradient: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)', color: '#8B5CF6', glow: 'rgba(139, 92, 246, 0.25)', isVersion: true },
@@ -127,13 +127,13 @@ export default function Dashboard() {
           left: '-20px',
           width: '120px',
           height: '120px',
-          background: 'radial-gradient(circle, rgba(139, 146, 152, 0.08) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(74, 144, 164, 0.1) 0%, transparent 70%)',
           borderRadius: '50%',
           filter: 'blur(20px)',
         }} />
         <Typography variant="h4" sx={{ 
           fontWeight: 700, 
-          background: 'linear-gradient(135deg, #F8FAFC 0%, #94A3B8 100%)',
+          background: 'linear-gradient(135deg, #4A90A4 0%, #2D5A6B 100%)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           mb: 1.2,
@@ -237,13 +237,14 @@ export default function Dashboard() {
           </Grid>
         ))}
 
-        <Grid size={{ xs: 12, md: 8 }}>
-          <Card sx={{ 
-            height: '100%', 
-            animation: 'fadeInUp 0.5s ease forwards',
-            animationDelay: '0.35s',
-            opacity: 0,
-          }}>
+          <Grid size={{ xs: 12, md: 8 }}>
+            <Card sx={{ 
+              height: '100%', 
+              animation: 'fadeInUp 0.5s ease forwards',
+              animationDelay: '0.35s',
+              opacity: 0,
+              className: 'metal-frame-accent',
+            }}>
             <CardContent sx={{ p: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
                 <Timeline sx={{ color: 'var(--primary)', fontSize: 20 }} />
@@ -266,6 +267,7 @@ export default function Dashboard() {
             animation: 'fadeInUp 0.5s ease forwards',
             animationDelay: '0.4s',
             opacity: 0,
+            className: 'metal-frame',
           }}>
             <CardContent sx={{ p: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>

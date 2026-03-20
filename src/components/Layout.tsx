@@ -18,12 +18,12 @@ import {
 import {
   Assessment as AssessmentIcon,
   Menu as MenuIcon,
-  Park as ParkIcon,
+  ElectricBolt as ElectricBoltIcon,
   History as HistoryIcon,
   Logout as LogoutIcon,
   Login as LoginIcon,
   Sensors as SensorsIcon,
-  Landscape as LandscapeIcon,
+  Terrain as TerrainIcon,
   ViewInAr as ViewInArIcon,
   Tv as TvIcon,
   SmartToy as SmartToyIcon,
@@ -34,12 +34,11 @@ import { logout } from '../store/slices/authSlice';
 const drawerWidth = 272;
 
 const menuItems = [
-  { text: 'AI智能诊断', icon: <SmartToyIcon />, path: '/' },
+  { text: '智能评估与诊断', icon: <SmartToyIcon />, path: '/predict' },
   { text: '监控大屏', icon: <TvIcon />, path: '/monitor-wall' },
   { text: '3D道路监测', icon: <ViewInArIcon />, path: '/road-3d' },
   { text: '传感器管理', icon: <SensorsIcon />, path: '/sensors' },
-  { text: '材料参数', icon: <LandscapeIcon />, path: '/material-params' },
-  { text: '智能评估', icon: <AssessmentIcon />, path: '/predict' },
+  { text: '材料参数', icon: <TerrainIcon />, path: '/material-params' },
   { text: '历史数据', icon: <HistoryIcon />, path: '/history' },
 ];
 
@@ -83,30 +82,30 @@ export default function Layout() {
           width: 46,
           height: 46,
           borderRadius: '14px',
-          background: 'linear-gradient(135deg, #8B9298 0%, #5A6168 100%)',
+          background: 'linear-gradient(135deg, #4A90A4 0%, #2D5A6B 100%)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          boxShadow: '0 4px 20px rgba(139, 146, 152, 0.35), 0 0 40px rgba(139, 146, 152, 0.1)',
+          boxShadow: '0 4px 20px rgba(74, 144, 164, 0.35), 0 0 40px rgba(74, 144, 164, 0.15)',
           position: 'relative',
-          border: '1px solid rgba(255,255,255,0.1)',
+          border: '1px solid rgba(74, 144, 164, 0.3)',
           '&::after': {
             content: '""',
             position: 'absolute',
             inset: -2,
             borderRadius: '16px',
-            background: 'linear-gradient(135deg, #8B9298 0%, #5A6168 100%)',
+            background: 'linear-gradient(135deg, #4A90A4 0%, #2D5A6B 100%)',
             opacity: 0.3,
             filter: 'blur(8px)',
             zIndex: -1,
           }
-        }}>
-          <ParkIcon sx={{ color: '#FFFFFF', fontSize: 26 }} />
+          }}>
+          <ElectricBoltIcon sx={{ color: '#FFFFFF', fontSize: 26 }} />
         </Box>
         <Box>
           <Typography variant="h6" sx={{ 
             fontWeight: 700, 
-            background: 'linear-gradient(135deg, #F8FAFC 0%, #94A3B8 100%)',
+            background: 'linear-gradient(135deg, #4A90A4 0%, #2D5A6B 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             fontSize: '1.05rem',
@@ -302,13 +301,13 @@ export default function Layout() {
             <Box sx={{ position: 'relative' }}>
               <Typography variant="h6" sx={{ 
                 fontWeight: 600,
-                background: 'linear-gradient(135deg, #F8FAFC 0%, #94A3B8 100%)',
+                background: 'linear-gradient(135deg, #4A90A4 0%, #2D5A6B 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 fontSize: '1.1rem',
                 letterSpacing: '-0.01em',
               }}>
-                镍铁渣路基回弹模量智能评估平台
+                破碎镍铁渣路基回弹模量评估与预警系统
               </Typography>
               <Box sx={{ 
                 position: 'absolute', 

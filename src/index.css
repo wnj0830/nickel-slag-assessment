@@ -618,6 +618,80 @@ body::after {
   color: #FFFFFF !important;
 }
 
-.MuiInputBase-input {
-  color: #FFFFFF !important;
+.metal-frame {
+  position: relative;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(145deg, rgba(26, 29, 33, 0.9) 0%, rgba(14, 16, 18, 0.85) 100%);
+  backdrop-filter: blur(10px);
+  transition: all var(--transition-normal);
+}
+
+.metal-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%, rgba(255,255,255,0.05) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.metal-frame::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(139, 146, 152, 0.3), transparent);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.metal-frame:hover {
+  border-color: var(--border-accent);
+  box-shadow: var(--shadow-lg), 0 0 30px rgba(139, 146, 152, 0.1);
+  transform: translateY(-2px);
+}
+
+.metal-frame-accent {
+  position: relative;
+  border: 1px solid rgba(74, 144, 164, 0.2);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(145deg, rgba(26, 29, 33, 0.9) 0%, rgba(14, 16, 18, 0.85) 100%);
+  backdrop-filter: blur(10px);
+}
+
+.metal-frame-accent::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(74, 144, 164, 0.3) 0%, transparent 50%, rgba(74, 144, 164, 0.1) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.metal-frame-accent::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20;
+  right: 20;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(74, 144, 164, 0.4), transparent);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.metal-frame-accent:hover {
+  border-color: rgba(74, 144, 164, 0.4);
+  box-shadow: var(--shadow-lg), 0 0 30px rgba(74, 144, 164, 0.15);
 }
